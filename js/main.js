@@ -19,10 +19,12 @@ function updateCategoryCounts() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    const savedZone = localStorage.getItem('userZone') || '6';
-    document.getElementById('currentZoneDisplay').textContent = savedZone;
-    if (!localStorage.getItem('userZone')) {
-        localStorage.setItem('userZone', '6');
+    // No default zone - start with "--"
+    const savedZone = localStorage.getItem('userZone');
+    if (savedZone) {
+        document.getElementById('currentZoneDisplay').textContent = savedZone;
+    } else {
+        document.getElementById('currentZoneDisplay').textContent = '--';
     }
     document.getElementById('globalBack').style.display = 'none';
     updateCategoryCounts();
