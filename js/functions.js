@@ -958,6 +958,8 @@ function populateCategoryGrid(sectionId) {
 function createCropCard(crop) {
     const card = document.createElement('div');
     card.className = 'crop-card';
+    card.dataset.cropName = crop.name;  // 👈 ADD THIS LINE
+    
     const isFavorite = favorites.includes(crop.name);
     if (isFavorite) {
         card.classList.add('favorite');
