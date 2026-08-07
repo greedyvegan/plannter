@@ -338,11 +338,11 @@ function viewFavoritesOnly() {
     }
     
     const filtered = allCrops.filter(c => favorites.includes(c.name));
-    const userZone = parseInt(localStorage.getItem('userZone')) || 6;
+    const userZone = parseInt(localStorage.getItem('userZone')) || null;
     
     filtered.sort((a, b) => {
-        const aCan = canPlantNow(a, userZone).can;
-        const bCan = canPlantNow(b, userZone).can;
+        const aCan = canPlantNow(a, userZone);
+        const bCan = canPlantNow(b, userZone);
         return (aCan === bCan) ? 0 : aCan ? -1 : 1;
     });
     
@@ -358,7 +358,7 @@ function viewPlantNow() {
     favoritesViewActive = false;
     closeFavorites();
     
-    const userZone = parseInt(localStorage.getItem('userZone')) || 6;
+    const userZone = parseInt(localStorage.getItem('userZone')) || null;
     const { monthName } = getCurrentMonth();
     
     document.querySelectorAll('.content-view').forEach(el => el.classList.remove('active'));
@@ -444,18 +444,27 @@ function clearFavorites() {
     }
 }
 
+// ============================================
+// CLEAR ZONE - FIXED (removes zone entirely)
+// ============================================
+
 function clearZone() {
-    const defaultZone = '6';
-    localStorage.setItem('userZone', defaultZone);
-    document.getElementById('currentZoneDisplay').textContent = defaultZone;
+    // Remove the zone from localStorage completely
+    localStorage.removeItem('userZone');
     
+    // Show "--" to indicate no filter
+    document.getElementById('currentZoneDisplay').textContent = '--';
+    
+    // Clear the search input
     document.getElementById('unifiedSearch').value = '';
     document.getElementById('searchClear').classList.remove('visible');
     document.getElementById('searchSuggestions').classList.remove('active');
     
+    // Reset all view states
     favoritesViewActive = false;
     plantNowViewActive = false;
     
+    // Reset to main view
     document.querySelectorAll('.content-view').forEach(el => el.classList.remove('active'));
     document.getElementById('masterResultsView').classList.add('active');
     document.querySelectorAll('.deck-btn').forEach(b => b.classList.remove('active'));
@@ -463,6 +472,7 @@ function clearZone() {
     document.getElementById('filterStatus').textContent = '';
     document.getElementById('masterViewTitle').textContent = '🌿 Complete Master Plant Inventory';
     
+    // Refresh the grid - this will show ALL plants
     handleUnifiedSearch();
 }
 
@@ -489,7 +499,7 @@ function updateModalContent(cropName) {
     if (!crop) return;
 
     const isFavorite = favorites.includes(crop.name);
-    const userZone = parseInt(localStorage.getItem('userZone')) || 6;
+    const userZone = parseInt(localStorage.getItem('userZone')) || null;
     const plantStatus = canPlantNow(crop, userZone);
     const body = document.getElementById('modalBody');
     
@@ -831,7 +841,7 @@ function handleUnifiedSearch() {
         searchPool = allCrops.filter(c => favorites.includes(c.name));
         titleText = `⭐ My Garden - Searching "${rawInput}"`;
     } else if (plantNowViewActive && rawInput) {
-        const userZone = parseInt(localStorage.getItem('userZone')) || 6;
+        const userZone = parseInt(localStorage.getItem('userZone')) || null;
         searchPool = allCrops.filter(c => favorites.includes(c.name) && canPlantNow(c, userZone).can);
         titleText = `🌱 Plant Now - Searching "${rawInput}"`;
     } else if (!favoritesViewActive && !plantNowViewActive) {
@@ -847,6 +857,13 @@ function handleUnifiedSearch() {
     let targetZone = null;
     let textQuery = queryLower;
 
+    // Check if there's a saved zone (but only use it if there's no search input)
+    const savedZone = localStorage.getItem('userZone');
+    if (savedZone && !rawInput && !favoritesViewActive && !plantNowViewActive) {
+        targetZone = parseInt(savedZone);
+        // Don't set status text for saved zone on initial load
+    }
+
     if (/^\d{5}$/.test(rawInput)) {
         const prefix3 = rawInput.substring(0, 3);
         const zipMap = {
@@ -861,10 +878,16 @@ function handleUnifiedSearch() {
             document.getElementById('currentZoneDisplay').textContent = targetZone;
             statusText = `📍 Zip Code ${rawInput}: Grow Zone ${targetZone}`;
         } else {
-            targetZone = 6;
-            localStorage.setItem('userZone', targetZone);
-            document.getElementById('currentZoneDisplay').textContent = targetZone;
-            statusText = `📍 Zip Code ${rawInput}: Estimated Grow Zone ${targetZone}`;
+            // If zip code isn't in the map, use the saved zone or none
+            const existingZone = localStorage.getItem('userZone');
+            if (existingZone) {
+                targetZone = parseInt(existingZone);
+                document.getElementById('currentZoneDisplay').textContent = targetZone;
+                statusText = `📍 Zip Code ${rawInput}: Estimated Grow Zone ${targetZone}`;
+            } else {
+                document.getElementById('currentZoneDisplay').textContent = '--';
+                statusText = `📍 Zip Code ${rawInput}: Zone not found`;
+            }
         }
         textQuery = "";
     } 
@@ -881,6 +904,11 @@ function handleUnifiedSearch() {
         statusText = rawInput ? `🔍 "${rawInput}"` : '';
         if (favoritesViewActive) statusText = `⭐ ${favorites.length} in your garden`;
         if (plantNowViewActive) statusText = `🌱 Plants ready to plant now`;
+        
+        // If there's a saved zone and we're on the main view, show it
+        if (!favoritesViewActive && !plantNowViewActive && !rawInput && savedZone) {
+            document.getElementById('currentZoneDisplay').textContent = savedZone;
+        }
     }
 
     const matches = searchPool.filter(c => {
@@ -980,7 +1008,7 @@ function createCropCard(crop) {
         card.classList.add('favorite');
     }
     
-    const userZone = parseInt(localStorage.getItem('userZone')) || 6;
+    const userZone = parseInt(localStorage.getItem('userZone')) || null;
     const plantStatus = canPlantNow(crop, userZone);
     if (plantStatus.can) {
         card.classList.add('plant-now');
