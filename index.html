@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 Smart Garden Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this) closeModal()">
+    <div class="modal" id="modalContent">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<!-- Favorites Overlay -->
+<div class="favorites-overlay" id="favoritesOverlay" onclick="closeFavorites()"></div>
+
+<!-- Favorites Panel - Side -->
+<div class="favorites-panel" id="favoritesPanel">
+    <div class="favorites-header">
+        <h2>
+            🌱 Garden Planner
+            <span class="count" id="favoritesCount">0</span>
+        </h2>
+        <button class="favorites-close" onclick="closeFavorites()">✕</button>
+    </div>
+    <div class="favorites-toolbar">
+        <div class="toolbar-row">
+            <button class="btn-plant-now" onclick="viewPlantNow()">🌱 Start My Garden Now</button>
+            <button class="btn-view-favorites" onclick="viewFavoritesOnly()">⭐ My Garden</button>
+        </div>
+        <div class="toolbar-row">
+            <button class="btn-clear-favorites" onclick="clearFavorites()">🗑️ Clear</button>
+            <button class="btn-close-favorites" onclick="closeFavorites()">Close</button>
+        </div>
+    </div>
+    <div class="favorites-list" id="favoritesList">
+        <div class="favorites-empty">
+            <span class="big-icon">🌱</span>
+            Your garden planner is empty<br>
+            <small style="color:#95a5a6;">Click the ★ on any plant to add it</small>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="mainContainer">
+    <header>
+        <h1>🌿 <span>Smart</span> Garden Planner</h1>
+        <p class="subtitle">Plan your garden with confidence. Add plants to your planner, upload photos, and get seed starting instructions.</p>
+    </header>
+
+    <!-- Unified Search Bar -->
+    <div class="search-bar-container">
+        <div class="search-wrapper">
+            <input type="text" id="unifiedSearch" class="search-input" placeholder="🔍 Search plants, zip code (e.g. 07001), or zone (e.g. Zone 6)..." onkeyup="handleSearchInput()" onfocus="handleSearchInput()">
+            <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+            <div class="search-suggestions" id="searchSuggestions"></div>
+        </div>
+        <div class="zone-display" id="zoneDisplay">
+            📍 Zone: <span id="currentZoneDisplay">6</span>
+            <button class="clear-zone" onclick="clearZone()" title="Clear zone filter">✕</button>
+        </div>
+    </div>
+
+    <div id="filterStatus" class="active-filter-badge"></div>
+
+<!-- Navigation Deck -->
+<div class="nav-deck" id="mainDeck">
+    <button class="deck-btn" onclick="showSection('fruits')">🍎 Fruits <span class="badge-count" id="fruitsCount">0</span></button>
+    <button class="deck-btn" onclick="showSection('vegetables')">🥕 Vegetables <span class="badge-count" id="vegetablesCount">0</span></button>
+    <button class="deck-btn" onclick="showSection('herbs')">🌿 Herbs <span class="badge-count" id="herbsCount">0</span></button>
+    <button class="deck-btn" onclick="showSection('flowers')">🌸 Flowers <span class="badge-count" id="flowersCount">0</span></button>
+    <button class="deck-btn favorites-btn" onclick="toggleFavorites()">🌱 Planner <span class="badge-count" id="favoritesBtnCount">0</span></button>
+</div>
+
+<!-- Action Buttons Row -->
+<div class="action-buttons" id="actionButtons">
+    <button class="action-btn btn-plant-now" onclick="viewPlantNow()">🌱 Start My Garden Now</button>
+    <button class="action-btn btn-view-favorites" onclick="viewFavoritesOnly()">⭐ My Garden</button>
+    <button class="action-btn btn-back-main" id="globalBack" style="display:none;" onclick="resetView()">⬅ Back to Main View</button>
+</div>
+
+    <!-- Category Views -->
+    <div id="fruitsView" class="content-view">
+        <h2>🍎 Fruits Collection</h2>
+        <div class="crop-grid" id="fruitsGrid"></div>
+    </div>
+
+    <div id="vegetablesView" class="content-view">
+        <h2>🥕 Vegetables Collection</h2>
+        <div class="crop-grid" id="vegetablesGrid"></div>
+    </div>
+
+    <div id="herbsView" class="content-view">
+        <h2>🌿 Herbs Collection</h2>
+        <div class="crop-grid" id="herbsGrid"></div>
+    </div>
+
+    <div id="flowersView" class="content-view">
+        <h2>🌸 Flowers Collection</h2>
+        <div class="crop-grid" id="flowersGrid"></div>
+    </div>
+
+    <!-- Master View -->
+    <div id="masterResultsView" class="content-view active">
+        <h2 id="masterViewTitle">🌿 Complete Master Plant Inventory</h2>
+        <div class="crop-grid" id="masterGrid"></div>
+    </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/functions.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
