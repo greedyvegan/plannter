@@ -857,11 +857,12 @@ function handleUnifiedSearch() {
     let targetZone = null;
     let textQuery = queryLower;
 
-    // Check if there's a saved zone (but only use it if there's no search input)
+    // 🔥 FIX: Only set the zone display if there's a saved zone
     const savedZone = localStorage.getItem('userZone');
-    if (savedZone && !rawInput && !favoritesViewActive && !plantNowViewActive) {
-        targetZone = parseInt(savedZone);
-        // Don't set status text for saved zone on initial load
+    
+    // If there's no saved zone and no search input, show "--"
+    if (!savedZone && !rawInput && !favoritesViewActive && !plantNowViewActive) {
+        document.getElementById('currentZoneDisplay').textContent = '--';
     }
 
     if (/^\d{5}$/.test(rawInput)) {
@@ -904,11 +905,6 @@ function handleUnifiedSearch() {
         statusText = rawInput ? `🔍 "${rawInput}"` : '';
         if (favoritesViewActive) statusText = `⭐ ${favorites.length} in your garden`;
         if (plantNowViewActive) statusText = `🌱 Plants ready to plant now`;
-        
-        // If there's a saved zone and we're on the main view, show it
-        if (!favoritesViewActive && !plantNowViewActive && !rawInput && savedZone) {
-            document.getElementById('currentZoneDisplay').textContent = savedZone;
-        }
     }
 
     const matches = searchPool.filter(c => {
