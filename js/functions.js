@@ -208,36 +208,53 @@ function saveFavorites() {
 }
 
 function toggleFavorite(cropName, updateModal = true) {
+    console.log('Toggling favorite for:', cropName); // Debug log
+    
     const index = favorites.indexOf(cropName);
     if (index > -1) {
         favorites.splice(index, 1);
+        console.log('Removed from favorites');
     } else {
         favorites.push(cropName);
+        console.log('Added to favorites');
     }
     saveFavorites();
     
+    // Update ALL cards with this name
     document.querySelectorAll('.crop-card').forEach(card => {
-        const nameEl = card.querySelector('h3');
-        if (nameEl) {
-            let nameText = nameEl.textContent.replace(/[⭐★☆]/g, '').trim();
-            if (nameText === cropName) {
-                const star = card.querySelector('.favorite-star');
-                if (star) {
-                    const isFav = favorites.includes(cropName);
-                    if (isFav) {
-                        star.classList.add('active');
-                        star.textContent = '★';
-                        card.classList.add('favorite');
-                    } else {
-                        star.classList.remove('active');
-                        star.textContent = '☆';
-                        card.classList.remove('favorite');
-                    }
+        // Use data attribute if available, fallback to h3 text
+        let cardName = card.dataset.cropName;
+        if (!cardName) {
+            const nameEl = card.querySelector('h3');
+            if (nameEl) {
+                cardName = nameEl.textContent.replace(/[⭐★☆]/g, '').trim();
+            }
+        }
+        
+        console.log('Checking card:', cardName, 'against:', cropName); // Debug log
+        
+        if (cardName === cropName) {
+            const star = card.querySelector('.favorite-star');
+            if (star) {
+                const isFav = favorites.includes(cropName);
+                console.log('Found star, setting to:', isFav ? '★' : '☆'); // Debug log
+                
+                if (isFav) {
+                    // ⭐ HIGHLIGHT ON
+                    star.classList.add('active');
+                    star.textContent = '★';
+                    card.classList.add('favorite');
+                } else {
+                    // ⭐ HIGHLIGHT OFF
+                    star.classList.remove('active');
+                    star.textContent = '☆';
+                    card.classList.remove('favorite');
                 }
             }
         }
     });
     
+    // Also update the modal if it's open
     if (updateModal) {
         const modalBody = document.getElementById('modalBody');
         if (modalBody && modalBody.dataset.cropName === cropName) {
@@ -245,6 +262,7 @@ function toggleFavorite(cropName, updateModal = true) {
         }
     }
     
+    // Refresh views if active
     if (favoritesViewActive) {
         viewFavoritesOnly();
     }
@@ -978,8 +996,8 @@ function createCropCard(crop) {
 
     card.innerHTML = `
         <button class="favorite-star ${isFavorite ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${crop.name}')" title="Add to garden">
-            ${starChar}
-        </button>
+    ${starChar}
+</button>
         <div class="card-img-placeholder" style="${imgStyle}">
             ${displayText}
         </div>
