@@ -3,10 +3,13 @@
 // ============================================
 
 function updateCategoryCounts() {
+    // Make sure we're counting the right categories
     const fruits = allCrops.filter(c => c.category === 'Fruit').length;
     const vegetables = allCrops.filter(c => c.category === 'Vegetable').length;
     const herbs = allCrops.filter(c => c.category === 'Herb').length;
     const flowers = allCrops.filter(c => c.category === 'Flower').length;
+    
+    console.log('Category Counts:', { fruits, vegetables, herbs, flowers }); // Debug log
     
     document.getElementById('fruitsCount').textContent = fruits;
     document.getElementById('vegetablesCount').textContent = vegetables;
@@ -27,7 +30,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('currentZoneDisplay').textContent = '--';
     }
     document.getElementById('globalBack').style.display = 'none';
+    
+    // Count categories
     updateCategoryCounts();
+    
+    // Load plants
     handleUnifiedSearch();
     updateFavoritesUI();
 });
