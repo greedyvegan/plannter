@@ -31,6 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     document.getElementById('globalBack').style.display = 'none';
     
+    // Initialize month selector for "Best Time to Plant"
+    initMonthSelector();
     // Count categories
     updateCategoryCounts();
     
