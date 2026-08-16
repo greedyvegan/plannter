@@ -1046,3 +1046,133 @@ function createCropCard(crop) {
 
     return card;
 }
+
+// ============================================
+// PLANT WINDOW / BEST TIME TO PLANT
+// ============================================
+
+let selectedMonths = [];
+let plantWindowResultsActive = false;
+
+// Toggle month selection
+function toggleMonth(monthIndex) {
+    const btn = document.querySelector(`.month-btn[data-month="${monthIndex}"]`);
+    if (!btn) return;
+    
+    const index = selectedMonths.indexOf(monthIndex);
+    if (index > -1) {
+        selectedMonths.splice(index, 1);
+        btn.classList.remove('selected');
+    } else {
+        selectedMonths.push(monthIndex);
+        btn.classList.add('selected');
+    }
+    
+    // Sort selected months
+    selectedMonths.sort((a, b) => a - b);
+}
+
+// Clear selected months
+function clearPlantWindow() {
+    selectedMonths = [];
+    document.querySelectorAll('.month-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    document.getElementById('plantWindowResults').style.display = 'none';
+    document.getElementById('plantWindowGrid').innerHTML = '';
+    plantWindowResultsActive = false;
+    
+    // Restore main view if no other view is active
+    if (!favoritesViewActive && !plantNowViewActive) {
+        resetView();
+    }
+}
+
+// Find plants that match the selected window
+function findPlantsByWindow() {
+    if (selectedMonths.length === 0) {
+        alert('Please select at least one month when you can plant.');
+        return;
+    }
+    
+    const resultsContainer = document.getElementById('plantWindowResults');
+    const grid = document.getElementById('plantWindowGrid');
+    const countDisplay = document.getElementById('plantWindowCount');
+    
+    // Parse selected months into ranges
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const selectedNames = selectedMonths.map(m => monthNames[m]);
+    
+    // Find matching plants
+    const matchingPlants = allCrops.filter(crop => {
+        const plantingMonths = crop.plantingMonths || '';
+        // Expand month abbreviations in plantingMonths
+        const expanded = expandMonths(plantingMonths);
+        
+        // Check if any selected month is in the planting window
+        return selectedMonths.some(month => {
+            const monthName = monthNames[month];
+            // Check if month appears in the planting window
+            // Handle ranges like "March - June" or "February - April, July - September"
+            const monthRanges = expanded.split(',').map(s => s.trim());
+            return monthRanges.some(range => {
+                if (range.includes(' - ')) {
+                    const [start, end] = range.split(' - ').map(s => s.trim());
+                    const startIndex = monthNames.indexOf(start);
+                    const endIndex = monthNames.indexOf(end);
+                    if (startIndex !== -1 && endIndex !== -1) {
+                        if (startIndex <= endIndex) {
+                            return month >= startIndex && month <= endIndex;
+                        } else {
+                            // Wrap-around (e.g., September - November)
+                            return month >= startIndex || month <= endIndex;
+                        }
+                    }
+                }
+                return range === monthName;
+            });
+        });
+    });
+    
+    // Display results
+    resultsContainer.style.display = 'block';
+    grid.innerHTML = '';
+    
+    if (matchingPlants.length === 0) {
+        countDisplay.textContent = '😕 No plants match your schedule. Try selecting different months!';
+        grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #636e72;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">🌱</div>
+                <p>No plants found for your selected months.</p>
+                <p style="font-size: 0.9rem; color: #95a5a6;">Try selecting different months or check if you need to start seeds indoors first.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    countDisplay.textContent = `🌱 ${matchingPlants.length} plant${matchingPlants.length > 1 ? 's' : ''} match your schedule (${selectedNames.join(', ')})`;
+    
+    matchingPlants.forEach(crop => {
+        grid.appendChild(createCropCard(crop));
+    });
+    
+    // Scroll to results
+    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    plantWindowResultsActive = true;
+}
+
+// Initialize month buttons
+function initMonthSelector() {
+    document.querySelectorAll('.month-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const month = parseInt(this.dataset.month);
+            toggleMonth(month);
+        });
+    });
+}
+
+// Make functions globally accessible
+window.toggleMonth = toggleMonth;
+window.clearPlantWindow = clearPlantWindow;
+window.findPlantsByWindow = findPlantsByWindow;
+window.initMonthSelector = initMonthSelector;
