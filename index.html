@@ -68,7 +68,35 @@
     </div>
 
     <div id="filterStatus" class="active-filter-badge"></div>
-
+<!-- Best Time to Plant Section -->
+<div class="plant-window-section" id="plantWindowSection">
+    <div class="plant-window-header">
+        <h3>📅 When Can You Plant?</h3>
+        <p>Select the months you're available to plant, and we'll show you what grows best during that time.</p>
+    </div>
+    <div class="month-selector" id="monthSelector">
+        <button class="month-btn" data-month="0">January</button>
+        <button class="month-btn" data-month="1">February</button>
+        <button class="month-btn" data-month="2">March</button>
+        <button class="month-btn" data-month="3">April</button>
+        <button class="month-btn" data-month="4">May</button>
+        <button class="month-btn" data-month="5">June</button>
+        <button class="month-btn" data-month="6">July</button>
+        <button class="month-btn" data-month="7">August</button>
+        <button class="month-btn" data-month="8">September</button>
+        <button class="month-btn" data-month="9">October</button>
+        <button class="month-btn" data-month="10">November</button>
+        <button class="month-btn" data-month="11">December</button>
+    </div>
+    <div class="plant-window-actions">
+        <button class="btn-find-plants" onclick="findPlantsByWindow()">🌱 Show Matching Plants</button>
+        <button class="btn-clear-window" onclick="clearPlantWindow()">✕ Clear Selection</button>
+    </div>
+    <div id="plantWindowResults" class="plant-window-results" style="display:none;">
+        <h4 id="plantWindowCount">0 plants match your schedule</h4>
+        <div class="crop-grid" id="plantWindowGrid"></div>
+    </div>
+</div>
 <!-- Navigation Deck -->
 <div class="nav-deck" id="mainDeck">
     <button class="deck-btn" onclick="showSection('fruits')">🍎 Fruits <span class="badge-count" id="fruitsCount">0</span></button>
