@@ -1139,3 +1139,139 @@ p.subtitle {
         justify-content: center;
     }
 }
+
+/* ============================================
+   PLANT WINDOW / BEST TIME TO PLANT
+   ============================================ */
+
+.plant-window-section {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 20px 25px;
+    margin-bottom: 30px;
+    border: 2px solid #e8f8f5;
+    transition: var(--transition);
+}
+
+.plant-window-section:hover {
+    border-color: var(--primary);
+}
+
+.plant-window-header h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+    color: var(--dark);
+}
+
+.plant-window-header p {
+    margin: 0 0 15px 0;
+    color: #636e72;
+    font-size: 0.9rem;
+}
+
+.month-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.month-btn {
+    padding: 8px 16px;
+    border: 2px solid #dfe6e9;
+    border-radius: 25px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: var(--transition);
+    font-family: 'Outfit', sans-serif;
+}
+
+.month-btn:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.month-btn.selected {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.plant-window-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-find-plants {
+    padding: 10px 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    font-family: 'Outfit', sans-serif;
+}
+
+.btn-find-plants:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.btn-clear-window {
+    padding: 10px 24px;
+    background: #fee;
+    color: #e74c3c;
+    border: 2px solid #e74c3c;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    font-family: 'Outfit', sans-serif;
+}
+
+.btn-clear-window:hover {
+    background: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.plant-window-results {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #edf2f7;
+}
+
+.plant-window-results h4 {
+    margin: 0 0 15px 0;
+    color: var(--dark);
+    font-size: 1.1rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .plant-window-section {
+        padding: 15px;
+    }
+    
+    .month-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+    
+    .plant-window-actions {
+        flex-direction: column;
+    }
+    
+    .btn-find-plants, .btn-clear-window {
+        width: 100%;
+        text-align: center;
+    }
+}
